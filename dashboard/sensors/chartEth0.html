@@ -1,0 +1,81 @@
+<div class="card card-blue mb-4">
+    <div class="card-header with-border">
+        <h3 class="card-title">Сеть</h3>
+
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="redo" onclick="return fchartEth0()"><i class="fa fa-redo-alt"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="card-body" style="">
+        <div id="chartEth0" style="height: 400px"></div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<?php start_section(); ?>
+<script>
+ function fchartEth0() {
+    $.post("/dashboard/dsh.php", {command: 'chartEth0'}, function (f) {
+        if (f.status == "success") {
+            //chartDuHDD.subtitle.textSetter(f.message);
+            chartEth0.series[0].setData(f.data);
+        }
+    }, 'json');
+}
+
+    chartEth0 = Highcharts.chart('chartEth0', {
+        chart: {
+            type: 'column',
+            events: {
+                load: fchartEth0()
+            }
+        },
+        title: {
+            text: 'eth0:'
+        },
+        xAxis: {
+            type: 'category',
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'среднее количество сейчас (Кб)'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '<b>{point.y:.1f} </b>'
+        },
+        series: [{
+                dataLabels: {
+                    enabled: true,
+                    rotation: -90,
+                    color: '#FFFFFF',
+                    align: 'right',
+                    format: '{point.y:.1f}', // one decimal
+                    y: 10, // 10 pixels down from the top
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            }]
+    });
+
+
+   
+</script>
+<?php end_section(); ?>

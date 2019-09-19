@@ -1,0 +1,96 @@
+<div class="card card-blue mb-4">
+    <div class="card-header with-border">
+        <h3 class="card-title">RAM и SWAP&nbsp;&nbsp;<a tabindex="0" 
+               role="button" 
+               data-html="true" 
+               data-toggle="popover" 
+               title="free -g" 
+               data-content="" id="idhelpRam"><i class="fa fa-question-circle"></i></a></h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="card-body" style="">
+        <div id="chartRam" style="height: 400px"></div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<?php start_section(); ?>
+<script>
+    
+    function fchartsRam() {
+        $.post("/dashboard/dsh.php", {command: 'chartRam'}, function (f) {
+            if (f.status == "success") {
+		 $("#idhelpRam").attr("data-content",f.message);
+                //chartRAM.subtitle.textSetter(f.message);
+                chartRAM.series[0].setData(f.data);
+
+                setTimeout(function () {
+                    var $card = $('#chartRam').closest('.card');
+                    var $cardChartProcRam = $('#chartProcRam').closest('.card');
+                    if (f.data[1].y > 20) {
+                        $card.removeClass('card-blue').addClass('card-green');
+                        $cardChartProcRam.removeClass('card-blue').addClass('card-green');
+                    } else {
+                        $card.removeClass('card-blue').addClass('card-red');
+                        $cardChartProcRam.removeClass('card-blue').addClass('card-green');
+                    }
+                }, 500);
+                // if(f.data[1].y > 20){
+
+                //.removeClass('.card-blue')
+
+                //}
+            }
+        }, 'json');
+
+    }
+    
+
+    chartRAM = Highcharts.chart('chartRam', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie',
+            events: {
+                load: fchartsRam()
+            }
+        },
+        exporting: {
+            enabled: true
+        },
+        title: {
+            text: ''
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        xAxis: {
+            type: 'Категория',
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+                name: 'Значение',
+                colorByPoint: true,
+            }]
+    });
+    
+    
+    
+    
+</script>
+
+<?php end_section(); ?>

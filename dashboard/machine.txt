@@ -1,0 +1,19 @@
+Machine:   Type: Desktop Mobo: ASUSTeK model: PRIME Z370-P v: Rev X.0x serial: 180220172704541 
+           UEFI [Legacy]: American Megatrends v: 0610 date: 01/11/2018 
+Memory:    RAM: total: 15.37 GiB used: 1.75 GiB (11.4%) 
+           Array-1: capacity: 64 GiB slots: 4 EC: None 
+           Device-1: ChannelA-DIMM1 size: 8 GiB speed: 2667 MT/s 
+           Device-2: ChannelA-DIMM2 size: No Module Installed 
+           Device-3: ChannelB-DIMM1 size: 8 GiB speed: 2667 MT/s 
+           Device-4: ChannelB-DIMM2 size: No Module Installed 
+CPU:       Topology: 6-Core model: Intel Core i7-8700 bits: 64 type: MT MCP L2 cache: 12.0 MiB 
+           Speed: 800 MHz min/max: 800/4300 MHz Core speeds (MHz): 1: 800 2: 800 3: 4107 4: 1736 5: 800 6: 800 7: 800 8: 800 
+           9: 800 10: 3905 11: 4234 12: 3368 
+Drives:    Local Storage: total: 566.41 GiB used: 152.34 GiB (26.9%) 
+           ID-1: /dev/sda vendor: Silicon Power model: SPCC M.2 Disk size: 119.24 GiB 
+           ID-2: /dev/sdb vendor: Crucial model: CT120BX500SSD1 size: 111.79 GiB 
+           ID-3: /dev/sdc vendor: Crucial model: CT120BX500SSD1 size: 111.79 GiB 
+           ID-4: /dev/sdd vendor: Crucial model: CT120BX500SSD1 size: 111.79 GiB 
+           ID-5: /dev/sde vendor: Western Digital model: WDS120G2G0B-00EPW0 size: 111.80 GiB 
+           Message: No Optical or Floppy data was found. 
+Unmounted: ID-1: /dev/sda2 size: 118.24 GiB fs: lvm2_member label: N/A uuid: 1WBkgD-21Y7-5oKM-93jM-pPjP-fyt3-Bhmt8o 

@@ -1,0 +1,97 @@
+<div class="card card-blue mb-4">
+    <div class="card-header with-border">
+        <h3 class="card-title">Использование HDD</h3>
+
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="card-body" style="">
+        <div id="chartProcHDD" style="height: 400px"></div>
+    </div>
+    <!-- /.box-body -->
+</div>
+<?php start_section(); ?>
+<script>
+
+
+
+
+    function fchartProcHDD() {
+        $.post("/dashboard/dsh.php", {command: 'chartProcHDD'}, function (f) {
+            if (f.status == "success") {
+                //chartProcHDD.subtitle.textSetter(f.message);
+                //console.log(f.data.series);
+                chartProcHDD.series[0].setData(f.data.series[0]);
+                chartProcHDD.series[1].setData(f.data.series[1]);
+
+                chartProcHDD.xAxis[0].update({
+                    categories: f.data.categoryes
+                });
+
+                var err = false;
+                $.each(f.data.series[0], function (i, v) {
+                    if (v.y < 15) {
+                        err = true;
+                    }
+                });
+                setTimeout(function () {
+                    var $card = $('#chartProcHDD').closest('.card');
+
+                    if (err == false) {
+                        $card.removeClass('card-blue').addClass('card-green');
+
+                    } else {
+                        $card.removeClass('card-blue').addClass('card-red');
+                    }
+                }, 500);
+
+
+            }
+        }, 'json');
+    }
+
+    chartProcHDD = Highcharts.chart('chartProcHDD', {
+        chart: {
+            type: 'column',
+            events: {
+                load: fchartProcHDD()
+            }
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas'],
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Смонтированные системы в %'
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{series.color}">{point.zname}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+            shared: true
+        },
+        plotOptions: {
+            column: {
+                stacking: 'percent'
+            }
+        },
+        series: [{
+                name: 'Свободно',
+                color: '#64d471',
+                data: []
+            }, {
+                name: 'Использовано',
+                color: '#e8bd5c',
+                data: []
+            }],
+
+    });
+
+</script>
+<?php end_section(); ?>

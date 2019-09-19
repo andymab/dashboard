@@ -1,0 +1,124 @@
+<div class="card card-blue mb-4">
+    <div class="card-header with-border">
+        <h3 class="card-title">RAID&nbsp;&nbsp;<a tabindex="0" 
+               role="button" 
+               data-html="true" 
+               data-toggle="popover" 
+               title="cat /proc/mdstat" 
+               data-content="" id="idhelpRaid"><i class="fa fa-question-circle"></i></a></h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="card-body" style="">
+        <div id="chartRAID" style="height: 400px"></div>
+    </div>
+    <!-- /.box-body -->
+</div>
+<?php start_section(); ?>
+<script>
+
+    var DrilldownSeries = [];
+
+    function fchartRAID() {
+        $.post("/dashboard/dsh.php", {command: 'chartRAID'}, function (f) {
+            if (f.status == "success") {
+		 $("#idhelpRaid").attr("data-content",'<pre>'+f.message+'</pre>');
+                var Series = f.data.series;
+                DrilldownSeries = f.data.sub;
+                chartRAID.series[0].setData(Series);
+
+                var err1 = false;
+                $.each(Series, function (i, v) {
+
+                    if (v.color !== '#64d471') {
+
+                        err1 = true;
+                    }
+                });
+
+                var $card = $('#chartRAID').closest('.card');
+                setTimeout(function () {
+                    if (err1 == false) {
+                        $card.removeClass('card-blue').addClass('card-green');
+
+                    } else {
+                        $card.removeClass('card-blue').addClass('card-red');
+                    }
+                }, 50);
+
+
+            }
+        }, 'json');
+
+    }
+
+
+    chartRAID = Highcharts.chart('chartRAID', {
+        chart: {
+            type: 'column',
+            events: {
+                load: fchartRAID(),
+                drilldown: function (e) {
+                    if (!e.seriesOptions) {
+                        //console.log(DrilldownSeries[e.point.name]);
+                        var series = {
+                            name: e.point.name,
+                            id: e.point.name,
+                            data: DrilldownSeries[e.point.name],
+                        };
+//DrilldownSeries[e.point.name]
+                        this.addSeriesAsDrilldown(e.point, series);
+                    }
+                }
+            }
+
+        },
+        title: {
+            text: ''
+        },
+
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Всего (GB)'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f} GB'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f} GB</b> всего<br/>'
+        },
+
+        series: [{
+                name: "RAID",
+                colorByPoint: true,
+                data: []
+            }], //load array created from json
+        drilldown: {
+            series: [],
+
+        }
+    });
+
+
+
+</script>
+<?php end_section(); ?>

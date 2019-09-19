@@ -1,0 +1,108 @@
+<div class="card card-blue mb-4">
+    <div class="card-header with-border">
+        <h3 class="card-title">Процессор:&nbsp;&nbsp;<a tabindex="0" 
+               role="button" 
+               data-html="true" 
+               data-toggle="popover" 
+               title="inxi -C -c 0 | uptime" 
+               data-content="" id="idhelpCPU"><i class="fa fa-question-circle"></i></a></h3>
+
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="redo" onclick="return fchartCPU()"><i class="fa fa-redo-alt"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="card-body" >
+        <div id="chartCPU" style="height: 400px"></div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<?php start_section(); ?>
+
+<script>
+function fchartCPU() {
+    $.post("/dashboard/dsh.php", {command: 'chartCPU'}, function (f) {
+        if (f.status == "success") {
+            $("#idhelpCPU").attr("data-content",f.message);
+          //  chartCPU.subtitle.textSetter(f.message);
+            chartCPU.series[0].setData(f.data);
+
+            var amt = f.data[0].y;
+            var sum = 0;
+            $.each(f.data, function (i, v) {
+                if (i > 0) {
+                    sum += v.y;
+                }
+            });
+            setTimeout(function () {
+                var $card = $('#chartCPU').closest('.card');
+                var $cardchartProcCpu = $('#chartProcCpu').closest('.card');
+                if (amt - 2 > sum) {
+                    $card.removeClass('card-blue').addClass('card-green');
+                    $cardchartProcCpu.removeClass('card-blue').addClass('card-green');
+                } else {
+                    $card.removeClass('card-blue').addClass('card-red');
+                    $cardchartProcCpu.removeClass('card-blue').addClass('card-red');
+                }
+            }, 500);
+            fchartProcCpu(); //исследуем процессы
+        }
+    }, 'json');
+
+}
+
+    chartCPU = Highcharts.chart('chartCPU', {
+        chart: {
+            type: 'column',
+            events: {
+                load: fchartCPU()
+            }
+        },
+        title: {
+            text: 'Загрузка CPU'
+        },
+
+        xAxis: {
+            type: 'category',
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Загрузка'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '<b>{point.y:.1f} </b>'
+        },
+        series: [{
+                dataLabels: {
+                    enabled: true,
+                    rotation: -90,
+                    color: '#FFFFFF',
+                    align: 'right',
+                    format: '{point.y:.1f}', // one decimal
+                    y: 10, // 10 pixels down from the top
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            }]
+    });
+
+</script>
+<?php end_section(); ?>

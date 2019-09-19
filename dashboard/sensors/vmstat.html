@@ -1,0 +1,389 @@
+<div class="card card-blue mb-4 ">
+    <div class="card-header with-border">
+        <h3 class="card-title">vmstat &nbsp;&nbsp;
+            <a tabindex="0" 
+
+               role="button" 
+               data-html="true" 
+               data-toggle="popover" 
+               title="<b>vmstat</b> - vmstat -n SEC N -t" 
+               data-content="<div>
+               <b>r</b> -- Среднее число выполняемых ядром потоков за временной интервал, который Вы выбрали.<br>
+               <b>b</b> -- Среднее число потоков, которые ждут своей очереди на выполнение в виртуальной памяти в течение заданного Вами промежутка времени. r всегда должен быть выше чем b; если нет, то в обычном случае это означает то, что слабым местом, давшим сбой, является центральный процессор.<br>
+               <b>fre</b> -- размер свободной памяти. Не волнуйтесь, если он окажется маленьким короткий. Главное - определить, происходит ли разбиение этой небольшой свободной памяти на страницы.<br>
+               <b>pi</b> -- Страницы, подкачанные в физическую память из виртуальной.<br>
+               <b>po</b> -- Страницы, откачанные из физической памяти в виртуальную.<br>
+               <b>CPU сегменты:</b><br>
+               <b>us</b> -- время пользователя<br>
+               <b>sy</b> -- системное время<br>
+               <b>id</b> -- время простоя<br>
+               <b>wa</b> --ожидание ввода/вывода</br> 
+               Если все записи в столбцах us и sys больше 80-ти процентов, скорее всего узкое место возникло в процессоре. Если значения в этих столбцах под 100 процентов, то система еле дышит. Если числа невелики, но значения в столбце wa (ожидание ввода/вывода) высоки (обычно больше чем 30), это может означать проблемы с подсистемой ввода/вывода, что может повлечь недостаточную нагрузку на центральный процессор. Если больше времени потрачено в sy нежели чем в us, это означает что ваша система тратит меньше времени на расчеты, чем на обработку данных, поступивших от ядра. Такая ситуация также нежелательна.
+
+
+               </div>"><i class="fa fa-question-circle"></i></a>
+
+
+        </h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="redo" onclick="return fchartVmstatNow(this)"><i class="fa fa-redo-alt"></i>
+            </button>
+            <div class="btn-group btn-group-sm dropleft">
+                <button type="button" class="btn btn-sm btn-card-tool dropleft" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" data-widget="cog"><i class="fa fa-cog"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <form class="px-3 py-2" id="turnVstat" style="font-size:0.8rem">
+                        <div class="form-group mb-1">
+                            <label for="nlVstat">Частота (s)</label>
+                            <input type="text" class="form-control form-control-sm" name="nlVstat" id="nlVstat" placeholder="15" value="15">
+                        </div>
+                        <div class="form-group">
+                            <label for="amtqueryVmstat">Количество (шт)</label>
+                            <input type="text" class="form-control form-control-sm" name="amtvmstat" id="amtqueryVmstat" placeholder="480" value="480">
+                        </div>
+                        <button id="btn-turnvmstat" class="btn btn-sm btn-primary">Сохранить</button>
+                    </form>
+                </div>
+            </div>
+
+
+            <!--                                <button type="button" class="btn btn-sm btn-card-tool" data-widget="get" onclick="return print_content('vmstat')"><i class="fa fa-download"></i>
+                                            </button>-->
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="card-body vmstat mb-4" >
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col">
+                    <div  id="siVm" style="height: 200px;"></div>
+
+                </div>
+                <div class="col">
+                    <div id="usVm" style="height: 200px;"></div>                               
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div  id="bVm" style="height: 200px;"></div>
+
+                </div>
+                <div class="col">
+                    <div  id="syVm" style="height: 200px;"></div>                               
+                </div>
+            </div>                  
+        </div>
+
+
+    </div>  
+</div>
+
+<?php start_section(); ?>
+<script>
+    var siVm, usVm, syVm, bVm;
+
+    function fchartVmstat() {
+        $.post("/dashboard/dsh.php", {command: 'chartVmstat'}, function (f) {
+            if (f.status == "success") {
+
+                siVm.series[0].setData(f.data.si.data);
+                siVm.subtitle.textSetter(f.data.si.message);
+                siVm.yAxis[0].axisTitle.attr({text: f.data.si.yaxis});
+
+
+                usVm.series[0].setData(f.data.us.data);
+                usVm.subtitle.textSetter(f.data.us.message);
+                usVm.yAxis[0].axisTitle.attr({text: f.data.us.yaxis});
+
+                syVm.series[0].setData(f.data.sy.data);
+                syVm.subtitle.textSetter(f.data.sy.message);
+                syVm.yAxis[0].axisTitle.attr({text: f.data.sy.yaxis});
+
+                bVm.series[0].setData(f.data.b.data);
+                bVm.subtitle.textSetter(f.data.b.message);
+                bVm.yAxis[0].axisTitle.attr({text: f.data.b.yaxis});
+
+            }
+        }, 'json');
+    }
+
+    function fchartVmstatNow(that) {
+        $('.vmstat').addClass('transparency');
+        $(that).find('i').addClass('fa-spin');
+        $.post("/dashboard/dsh.php", {command: 'turnVstatNow'}, function (f) {
+            if (f.status == "success") {
+                siVm.series[0].setData(f.data.si.data);
+                siVm.subtitle.textSetter(f.data.si.message);
+                siVm.yAxis[0].axisTitle.attr({text: f.data.si.yaxis});
+
+
+                usVm.series[0].setData(f.data.us.data);
+                usVm.subtitle.textSetter(f.data.us.message);
+                usVm.yAxis[0].axisTitle.attr({text: f.data.us.yaxis});
+
+                syVm.series[0].setData(f.data.sy.data);
+                syVm.subtitle.textSetter(f.data.sy.message);
+                syVm.yAxis[0].axisTitle.attr({text: f.data.sy.yaxis});
+
+                bVm.series[0].setData(f.data.b.data);
+                bVm.subtitle.textSetter(f.data.b.message);
+                bVm.yAxis[0].axisTitle.attr({text: f.data.b.yaxis});
+
+                $(that).find('i').removeClass('fa-spin');
+                $('.vmstat').removeClass('transparency');
+            }
+        }, 'json');
+    }
+
+
+    $('#btn-turnvmstat').on('click', function (e) {
+        e.preventDefault();
+        $.post("/dashboard/dsh.php", {command: 'turnVstat', data: $('#turnVstat').serialize()}, function (f) {
+            if (f.status == "success") {
+            }
+        }, 'json');
+    });
+
+    siVm = Highcharts.chart('siVm', {
+        chart: {
+            zoomType: 'x'
+        },
+        time: {
+            timezone: 'Europe/Moscow'
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: 'Объмен (si) RAM-HDD'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            title: {
+                text: 'avrg~0 max < 20'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+        },
+
+        series: [{
+                type: 'area',
+                name: 'RAM <=> HDD',
+                data: [],
+            }]
+    });
+
+    usVm = Highcharts.chart('usVm', {
+        chart: {
+            zoomType: 'x'
+        },
+        time: {
+            timezone: 'Europe/Moscow'
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: '(us) CPU'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            title: {
+                text: 'rate'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+        },
+
+        series: [{
+                type: 'area',
+                name: 'CPU',
+                data: []
+            }]
+    });
+
+    syVm = Highcharts.chart('syVm', {
+        chart: {
+            zoomType: 'x'
+        },
+        time: {
+            timezone: 'Europe/Moscow'
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: '(sy) CPU'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            title: {
+                text: 'rate'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+        },
+
+        series: [{
+                type: 'area',
+                name: 'CPU',
+                data: []
+            }]
+    });
+
+    bVm = Highcharts.chart('bVm', {
+        chart: {
+            zoomType: 'x'
+        },
+        time: {
+            timezone: 'Europe/Moscow'
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: 'HDD'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            title: {
+                text: 'rate'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+        },
+
+        series: [{
+                type: 'area',
+                name: 'HDD',
+                data: []
+            }]
+    });
+
+
+
+
+
+    fchartVmstat();
+
+</script>
+<?php end_section(); ?>

@@ -1,0 +1,101 @@
+<?php 
+$js ='';
+
+function start_section(){
+ob_start();
+}
+
+function end_section(){ global $js;
+$js .= ob_get_clean();
+//return $js;    
+}
+
+
+?>
+
+<!doctype html>
+<html lang="ru">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="stylesheet" href="assets/css/all.min.css">
+        <link rel="stylesheet" href="assets/css/main.css?ver=<?=filemtime('assets/css/main.css');?>">
+        <title><?=shell_exec('uname -n')?></title>
+    </head>
+    <body>
+
+
+        <!-- Content Row -->
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col">
+                    <?php require(__DIR__ . "/sensors/machine.html");?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartRam.html");?>
+                </div>
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartProcRam.html");?>
+                </div>
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartCPU.html");?>
+                </div>   
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartProcCpu.html");?>
+                </div>
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartHDD.html");?>
+                </div>
+
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartRAID.html");?>
+                </div>
+            </div>
+            <div class="row ">   
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartProcHDD.html");?>
+                </div>
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartDuHDD.html");?>
+                </div>  
+
+                <div class="col-md-4">
+                    <?php require(__DIR__ . "/sensors/chartEth0.html");?>
+                </div>     
+            </div>
+            <div class="row">
+                <div class="col">
+                    <?php require(__DIR__ . "/sensors/vmstat.html");?>
+                </div>               
+
+            </div> 
+
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>-->   
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="http://code.highcharts.com/modules/exporting.js"></script>
+        <script src="http://code.highcharts.com/modules/offline-exporting.js"></script>
+        <script src="http://code.highcharts.com/modules/export-data.js"></script>
+        <script src="http://code.highcharts.com/modules/drilldown.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data-2012-2022.min.js"></script>
+        <script src="dsh.js?ver=<?=filemtime('dsh.js');?>"></script>
+        <?=$js;?>
+    </body>
+</html>

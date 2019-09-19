@@ -1,0 +1,81 @@
+<div class="card card-blue mb-4">
+    <div class="card-header with-border">
+        <h3 class="card-title">Распределение данных (DU)</h3>
+
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="card-body" style="">
+        <div id="chartDuHDD" style="height: 400px"></div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+
+<?php start_section(); ?>
+<script>
+    
+        function fchartDuHDD() {
+        $.post("/dashboard/dsh.php", {command: 'chartDuHDD'}, function (f) {
+            if (f.status == "success") {
+                //chartDuHDD.subtitle.textSetter(f.message);
+                chartDuHDD.series[0].setData(f.data);
+            }
+        }, 'json');
+    }
+
+
+    chartDuHDD = Highcharts.chart('chartDuHDD', {
+        chart: {
+            type: 'column',
+            events: {
+                load: fchartDuHDD()
+            }
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category',
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Заполнено GB'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '<b>{point.y:.1f} </b>'
+        },
+        series: [{
+                dataLabels: {
+                    enabled: true,
+                    rotation: -90,
+                    color: '#FFFFFF',
+                    align: 'right',
+                    format: '{point.y:.1f}', // one decimal
+                    y: 10, // 10 pixels down from the top
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            }]
+    });
+
+
+</script>
+<?php end_section(); ?>

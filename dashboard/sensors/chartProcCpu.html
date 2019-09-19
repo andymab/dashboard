@@ -1,0 +1,63 @@
+<div class="card card-blue mb-4">
+    <div class="card-header with-border">
+        <h3 class="card-title">Использование CPU&nbsp;&nbsp;<a tabindex="0" 
+               role="button" 
+               data-html="true" 
+               data-toggle="popover" 
+               title="ps -eo cmd,%cpu --sort=-%cpu | head" 
+               data-content="" id="idhelpProcCpu"><i class="fa fa-question-circle"></i></a></h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-card-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="card-body" style="">
+        <div id="chartProcCpu" style="height: 400px"></div>
+    </div>
+    <!-- /.box-body -->
+</div>
+<?php start_section(); ?>
+<script>
+
+
+function fchartProcCpu() {
+    $.post("/dashboard/dsh.php", {command: 'chartProcCpu'}, function (f) {
+        if (f.status == "success") {
+	    $("#idhelpProcCpu").attr("data-content",'<pre>'+f.message+'</pre>');
+            //chartProcCpu.title.textSetter(f.message);
+            chartProcCpu.series[0].setData(f.data);
+        }
+    }, 'json');
+}
+
+
+    chartProcCpu = Highcharts.chart('chartProcCpu', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie',
+        },
+        title: {
+            text: ''
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{}]
+    });
+
+
+</script>
+<?php end_section(); ?>

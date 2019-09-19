@@ -1,0 +1,11 @@
+php_flag display_errors on
+
+Options -Indexes
+DirectoryIndex index.html index.shtml index.pl index.cgi index.php
+
+#AddHandler application/x-httpd-php5 .php5 .php4 .php .php3 .php2 .phtml .htm .html
+#AddType application/x-httpd-php5 .php5 .php4 .php .php3 .php2 .phtml .htm .html
+AddType application/x-httpd-php .php .phtml .php3 .html
+AddType application/x-httpd-php-source .phps
+
+

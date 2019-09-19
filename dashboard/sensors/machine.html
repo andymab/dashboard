@@ -1,0 +1,23 @@
+<div class="card card-blue mb-4">
+    <div class="card-header with-border">
+        <h3 class="card-title"><?=shell_exec('uname -n')?>&nbsp;&nbsp;<a tabindex="0" 
+               role="button" 
+               data-html="true" 
+               data-toggle="popover" 
+               title=" inxi -mCMd -c -o > /var/www/html/dashboard/machine.txt" 
+               data-content="" id="idhelpMachineFeatures"><i class="fa fa-question-circle"></i></a></h3>
+    </div>
+
+    <!-- /.box-body -->
+</div>
+
+<?php start_section(); ?>
+
+<script>
+    $.post("/dashboard/dsh.php", {command: 'MachineFeatures'}, function (f) {
+        if (f.status == "success") {
+            $("#idhelpMachineFeatures").attr("data-content","<pre>"+f.message+"</pre>");
+        }
+    }, 'json');
+</script>
+<?php end_section();?>
